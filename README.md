@@ -28,6 +28,10 @@ ASP.NET Core MVC ile geliştirilen, içerikleri SQL Server veritabanından yöne
 </p>
 
 <p align="center">
+  <img src="docs/screenshots/hakkimda.png" alt="Hakkımda ve özgeçmiş bölümü" width="800">
+</p>
+
+<p align="center">
   <img src="docs/screenshots/yetenekler.png" alt="Yetenekler ve teknoloji alanları" width="800">
 </p>
 
@@ -41,6 +45,10 @@ ASP.NET Core MVC ile geliştirilen, içerikleri SQL Server veritabanından yöne
 
 <p align="center">
   <img src="docs/screenshots/egitim.png" alt="Eğitim ve alıntı bölümü" width="800">
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/iletisim.png" alt="İletişim bilgileri ve mesaj formu" width="800">
 </p>
 
 ## Admin Paneli Ekran Görüntüleri
@@ -132,5 +140,5 @@ ASP.NET Core MVC ile geliştirilen, içerikleri SQL Server veritabanından yöne
   </p>
 </details>
 
-> Ekran görüntüleri sunum amacıyla eklenmiştir. Kişisel CV PDF dosyaları depoya dahil edilmez.
+> Ekran görüntüleri sunum amacıyla eklenmiştir. Kişisel CV PDF dosyaları depoya dahil edilmez; iletişim ekranındaki e-posta adresi gizlenmiştir.
 > Admin ekran görüntülerinde e-posta, telefon, kişisel profil bağlantısı ve ziyaretçi mesajı gibi özel bilgiler gizlenmiştir.
