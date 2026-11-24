@@ -5,6 +5,11 @@ namespace MYAcademy_PortfolioProject.Context
 {
     public class PortfolioContext : DbContext
     {
+        public PortfolioContext(DbContextOptions<PortfolioContext> options)
+            : base(options)
+        {
+        }
+
         public DbSet<Experience> Experiences { get; set; }
         public DbSet<HeroSection> HeroSections { get; set; }
         public DbSet<HeroTitle> HeroTitles { get; set; }
