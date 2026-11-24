@@ -1,0 +1,49 @@
+﻿<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Mobil sidebar aç/kapat
+    const sidebar = document.getElementById('adminSidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+
+    if (sidebar && sidebarToggle) {
+        sidebarToggle.addEventListener('click', () => sidebar.classList.toggle('show-sidebar'));
+
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 991.98 &&
+                !sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
+                sidebar.classList.remove('show-sidebar');
+            }
+        });
+    }
+
+    // Navbar arama: bulunduğun sayfadaki tabloyu filtreler
+    const navSearch = document.getElementById('navQuickSearch');
+    if (navSearch) {
+        navSearch.addEventListener('input', function () {
+            const q = this.value.toLowerCase().trim();
+            document.querySelectorAll('.custom-admin-table tbody tr').forEach(row => {
+                row.style.display = row.innerText.toLowerCase().includes(q) ? '' : 'none';
+            });
+        });
+    }
+
+    // İletişim sayfasındaki form varsa SweetAlert onayı çalışsın
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const form = this;
+            Swal.fire({
+                title: "Değişiklikler Kaydedilsin mi?",
+                showDenyButton: true,
+                confirmButtonText: "Kaydet",
+                denyButtonText: "Kaydetme"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire("İşlem Başarılı! Sayfayı Kontrol Ediniz!", "", "success").then(() => form.submit());
+                } else if (result.isDenied) {
+                    Swal.fire("İşlem başarısız", "", "info");
+                }
+            });
+        });
+    }
+</script>

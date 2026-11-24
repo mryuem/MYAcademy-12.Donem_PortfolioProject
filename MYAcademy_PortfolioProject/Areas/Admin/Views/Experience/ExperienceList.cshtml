@@ -1,0 +1,298 @@
+﻿@model List<Experience>
+
+@{
+    ViewData["Title"] = "Deneyimler";
+    Layout = "~/Areas/Admin/Views/AdminLayout/Index.cshtml";
+}
+
+<main class="page-content-area">
+
+    <!-- Page Header Row -->
+    <div class="content-header-row">
+        <div>
+            <h1 class="page-title">Deneyimlerim Listesi</h1>
+            <p class="page-subtitle">Portfolyo sitenizde yer alacak deneyim içeriklerini buradan yönetebilirsiniz.</p>
+        </div>
+        <div class="header-actions">
+            <button type="button" class="btn-pastel-primary" onclick="openQuickAddModal()">
+                <i class="bi bi-plus-circle-fill"></i>
+                <span>Hızlı Ekle</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 4 Statistics Summary Cards -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-icon-wrapper icon-green">
+                <i class="bi bi-briefcase"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Toplam Deneyim</span>
+                <h3 class="stat-value" id="statTotalCount">@ViewBag.TotalCount</h3>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon-wrapper icon-blue">
+                <i class="bi bi-check2-circle"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Aktif Kayıt</span>
+                <h3 class="stat-value" id="statActiveCount">@ViewBag.ActiveCount</h3>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon-wrapper icon-beige">
+                <i class="bi bi-pause-circle"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Pasif Kayıt</span>
+                <h3 class="stat-value" id="statPassiveCount">@ViewBag.PassiveCount</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Experience Table Container -->
+    <div class="data-table-card">
+        <div class="page-content-area">
+            <div class="content-header-row">
+                <div>
+                    <h2 class="page-title">Deneyimlerim</h2>
+                    <p class="page-subtitle">Sitede görünen deneyim kayıtlarını buradan yönetebilirsiniz.</p>
+                </div>
+                <div class="header-actions">
+                    <a asp-action="CreateExperience" class="btn-pastel-primary">
+                        <i class="bi bi-plus-lg"></i>
+                        <span>Yeni Deneyim</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="data-table-card">
+                <div class="table-responsive-wrapper">
+                    <table class="custom-admin-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Başlık</th>
+                                <th>Şirket</th>
+                                <th>Kategori</th>
+                                <th>Açıklama</th>
+                                <th>Durum</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <!-- BURAYA id="experienceTableBody" EKLENDİ -->
+                        <tbody id="experienceTableBody">
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="col-id">@item.ExperienceId</td>
+                                    <td><strong>@item.Title</strong></td>
+                                    <td>@item.CompanyName</td>
+                                    <td><span class="work-type-badge">@item.Category?.CategoryName</span></td>
+                                    <td>@item.Description</td>
+                                    <td>
+                                        <a asp-action="ChangeStatus" asp-route-id="@item.ExperienceId" style="text-decoration:none;" title="Durumu değiştir">
+                                            @if (item.IsActive)
+                                            {
+                                                <span class="status-pill status-active">Aktif</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="status-pill status-passive">Pasif</span>
+                                            }
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <div class="row-actions-group">
+                                            <a asp-action="UpdateExperience" asp-route-id="@item.ExperienceId" class="btn-action-icon btn-edit" title="Güncelle">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a asp-action="DeleteExperience" asp-route-id="@item.ExperienceId" class="btn-action-icon btn-delete" title="Sil">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<!-- HIZLI DENEYİM EKLEME KARTI (MODAL) -->
+<div id="quickAddOverlay" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.55); z-index:9999; align-items:center; justify-content:center; padding:16px;">
+    <div style="background:#fff; border-radius:16px; width:100%; max-width:500px; padding:24px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.15); animation: fadeInCard 0.2s ease;">
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; border-bottom:1px solid #f1f5f9; padding-bottom:12px;">
+            <h3 style="margin:0; font-size:1.2rem; font-weight:600;">Hızlı Deneyim Ekle</h3>
+            <button type="button" onclick="closeQuickAddModal()" style="background:none; border:none; font-size:1.4rem; cursor:pointer; color:#64748b;">&times;</button>
+        </div>
+
+        <div id="quickAddError" style="display:none; background:#fee2e2; color:#b91c1c; padding:10px 12px; border-radius:8px; margin-bottom:14px; font-size:0.9rem;"></div>
+
+        <form id="quickAddForm">
+            <div style="margin-bottom:14px;">
+                <label style="display:block; font-weight:500; margin-bottom:6px; font-size:0.9rem;">Başlık / Pozisyon *</label>
+                <input type="text" id="qaTitle" required placeholder="Örn: Full Stack .NET Developer"
+                       style="width:100%; padding:10px 12px; border:1px solid #cbd5e1; border-radius:8px; outline:none;" />
+            </div>
+
+            <div style="margin-bottom:14px;">
+                <label style="display:block; font-weight:500; margin-bottom:6px; font-size:0.9rem;">Şirket Adı *</label>
+                <input type="text" id="qaCompanyName" required placeholder="Örn: ABC Teknoloji"
+                       style="width:100%; padding:10px 12px; border:1px solid #cbd5e1; border-radius:8px; outline:none;" />
+            </div>
+
+            <div style="margin-bottom:14px;">
+                <label style="display:block; font-weight:500; margin-bottom:6px; font-size:0.9rem;">Kategori *</label>
+                <select id="qaCategoryId" asp-items="ViewBag.Categories" required
+                        style="width:100%; padding:10px 12px; border:1px solid #cbd5e1; border-radius:8px; outline:none; background:#fff;">
+                </select>
+            </div>
+
+            <div style="margin-bottom:14px;">
+                <label style="display:block; font-weight:500; margin-bottom:6px; font-size:0.9rem;">Açıklama</label>
+                <textarea id="qaDescription" rows="3" placeholder="Deneyim detayları..."
+                          style="width:100%; padding:10px 12px; border:1px solid #cbd5e1; border-radius:8px; outline:none; resize:vertical;"></textarea>
+            </div>
+
+            <div style="margin-bottom:20px; display:flex; align-items:center; gap:8px;">
+                <input type="checkbox" id="qaIsActive" checked style="width:16px; height:16px; cursor:pointer;" />
+                <label for="qaIsActive" style="margin:0; cursor:pointer; font-size:0.9rem;">Sitede aktif olarak yayınlansın</label>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+                <button type="button" onclick="closeQuickAddModal()"
+                        style="padding:9px 16px; border:1px solid #cbd5e1; background:#fff; border-radius:8px; cursor:pointer; font-weight:500;">
+                    İptal
+                </button>
+                <button type="submit" id="qaSubmitBtn" class="btn-pastel-primary" style="border:none; cursor:pointer;">
+                    Kaydet
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    (function () {
+        const qaOverlay = document.getElementById("quickAddOverlay");
+        const qaForm = document.getElementById("quickAddForm");
+        const qaError = document.getElementById("quickAddError");
+
+        // Layout'taki transform/overflow sorunlarından kaçınmak için modalı body'ye taşı
+        document.body.appendChild(qaOverlay);
+
+        // XSS'e karşı HTML escape
+        function esc(s) {
+            const d = document.createElement("div");
+            d.textContent = s ?? "";
+            return d.innerHTML;
+        }
+
+        // Kartı aç
+        window.openQuickAddModal = function () {
+            qaError.style.display = "none";
+            qaOverlay.style.display = "flex";
+            document.getElementById("qaTitle").focus();
+        };
+
+        // Kartı kapat
+        window.closeQuickAddModal = function () {
+            qaOverlay.style.display = "none";
+            qaForm.reset();
+        };
+
+        // Karanlık alana tıklanınca kapat
+        qaOverlay.addEventListener("click", function (e) {
+            if (e.target === qaOverlay) window.closeQuickAddModal();
+        });
+
+        // Form gönderildiğinde (AJAX)
+        qaForm.addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById("qaSubmitBtn");
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Kaydediliyor...";
+            qaError.style.display = "none";
+
+            const payload = {
+                title: document.getElementById("qaTitle").value.trim(),
+                companyName: document.getElementById("qaCompanyName").value.trim(),
+                categoryId: parseInt(document.getElementById("qaCategoryId").value),
+                description: document.getElementById("qaDescription").value.trim(),
+                isActive: document.getElementById("qaIsActive").checked
+            };
+
+            try {
+                const response = await fetch("/Admin/Experience/QuickAddExperience", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                let result = null;
+                try { result = await response.json(); } catch { }
+
+                if (!response.ok || !result || !result.success) {
+                    qaError.textContent = (result && result.message) || "Kayıt eklenirken bir hata oluştu.";
+                    qaError.style.display = "block";
+                    return;
+                }
+
+                const item = result.data;
+
+                // 1. Yeni satırı tablonun tasarımına uygun oluştur
+                const statusHtml = item.isActive
+                    ? `<span class="status-pill status-active">Aktif</span>`
+                    : `<span class="status-pill status-passive">Pasif</span>`;
+
+                const newRow = `
+                    <tr>
+                        <td class="col-id">${item.experienceId}</td>
+                        <td><strong>${esc(item.title)}</strong></td>
+                        <td>${esc(item.companyName)}</td>
+                        <td><span class="work-type-badge">${esc(item.categoryName)}</span></td>
+                        <td>${esc(item.description)}</td>
+                        <td>
+                            <a href="/Admin/Experience/ChangeStatus/${item.experienceId}" style="text-decoration:none;" title="Durumu değiştir">${statusHtml}</a>
+                        </td>
+                        <td>
+                            <div class="row-actions-group">
+                                <a href="/Admin/Experience/UpdateExperience/${item.experienceId}" class="btn-action-icon btn-edit" title="Güncelle"><i class="bi bi-pencil"></i></a>
+                                <a href="/Admin/Experience/DeleteExperience/${item.experienceId}" class="btn-action-icon btn-delete" title="Sil"><i class="bi bi-trash"></i></a>
+                            </div>
+                        </td>
+                    </tr>`;
+
+                document.getElementById("experienceTableBody").insertAdjacentHTML("beforeend", newRow);
+
+                // 2. Sayaç kartlarını güncelle
+                const total = document.getElementById("statTotalCount");
+                total.textContent = parseInt(total.textContent) + 1;
+
+                const counter = document.getElementById(item.isActive ? "statActiveCount" : "statPassiveCount");
+                counter.textContent = parseInt(counter.textContent) + 1;
+
+                // 3. Modalı kapat
+                window.closeQuickAddModal();
+
+            } catch (err) {
+                qaError.textContent = "Sunucu ile bağlantı kurulamadı.";
+                qaError.style.display = "block";
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Kaydet";
+            }
+        });
+    })();
+</script>

@@ -1,0 +1,448 @@
+﻿@model MYAcademy_PortfolioProject.Models.DashBoardViewModel
+
+@{
+    ViewData["Title"] = "İstatiskler";
+    Layout = "~/Areas/Admin/Views/AdminLayout/Index.cshtml";
+
+    var cards = new List<(int Val, string Label, string Icon, string Cls)>
+    {
+        (Model.TotalMessages,      "Toplam Mesaj", "bi-envelope",              "icon-green"),
+        (Model.UnreadMessages,     "Okunmamış",    "bi-envelope-exclamation",  "icon-beige"),
+        (Model.ReadMessages,       "Okunmuş",      "bi-envelope-check",        "icon-blue"),
+        (Model.SkillCount,         "Yetenekler",   "bi-stars",                 "icon-purple"),
+        (Model.ExperienceCount,    "Deneyimler",   "bi-briefcase",             "icon-beige"),
+        (Model.EducationCount,     "Eğitimler",    "bi-mortarboard",           "icon-green")
+    };
+
+    int weekMax = Model.WeekCounts.Any() ? Model.WeekCounts.Max() : 0;
+    if (weekMax == 0) { weekMax = 1; }
+
+    int catMax = Model.CategoryStats.Any() ? Model.CategoryStats.Max(x => x.ProjectCount) : 0;
+    if (catMax == 0) { catMax = 1; }
+}
+
+<style>
+    /* Dashboard'a özel küçük eklemeler (layout değişkenlerini kullanır) */
+    .stats-row.stats-row-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .dash-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 1.1rem;
+        margin-bottom: 1.8rem;
+    }
+
+    .dash-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-subtle);
+        padding: 1.4rem 1.5rem;
+    }
+
+    .dash-card-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 0 0 1.2rem;
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--text-primary);
+    }
+
+        .dash-card-title small {
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.775rem;
+        }
+
+    .card-section-head {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid var(--border-soft);
+        background: #FFFFFF;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+        .card-section-head h2 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .card-section-head a {
+            font-size: 0.825rem;
+            font-weight: 600;
+            color: var(--accent-primary-hover);
+            text-decoration: none;
+        }
+
+            .card-section-head a:hover {
+                color: #2F4F38;
+            }
+
+    /* Haftalık çubuk grafik */
+    .week-bars {
+        display: flex;
+        align-items: flex-end;
+        gap: 0.8rem;
+        height: 200px;
+    }
+
+    .week-bar {
+        flex: 1;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 6px;
+    }
+
+        .week-bar b {
+            font-size: 0.8rem;
+            color: var(--text-primary);
+        }
+
+        .week-bar span {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+    .week-bar-fill {
+        width: 100%;
+        max-width: 44px;
+        min-height: 4px;
+        background: var(--accent-primary);
+        border-radius: 8px 8px 4px 4px;
+        transition: background-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .week-bar:hover .week-bar-fill {
+        background: var(--accent-primary-hover);
+        transform: translateY(-2px);
+    }
+
+    /* Okunma oranı halkası */
+    .donut-ring {
+        width: 156px;
+        height: 156px;
+        border-radius: 50%;
+        margin: 0.4rem auto 1.3rem;
+        display: grid;
+        place-items: center;
+        background: conic-gradient(var(--accent-primary) calc(var(--p) * 1%), var(--accent-pastel-green) 0);
+    }
+
+        .donut-ring > div {
+            width: 114px;
+            height: 114px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            display: grid;
+            place-items: center;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+    .donut-legend {
+        display: flex;
+        justify-content: center;
+        gap: 1.2rem;
+        flex-wrap: wrap;
+        font-size: 0.825rem;
+        color: var(--text-secondary);
+    }
+
+        .donut-legend i {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+            margin-right: 6px;
+        }
+
+    /* Kategori dağılım çubuğu */
+    .dist-track {
+        background: var(--accent-pastel-green);
+        border-radius: 20px;
+        height: 10px;
+        overflow: hidden;
+    }
+
+    .dist-fill {
+        height: 100%;
+        background: var(--accent-primary);
+        border-radius: 20px;
+    }
+
+    /* Son mesajlar */
+    .msg-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 14px 1.5rem;
+        border-bottom: 1px solid var(--border-soft);
+        transition: background-color 0.15s ease;
+    }
+
+        .msg-item:last-child {
+            border-bottom: none;
+        }
+
+        .msg-item:hover {
+            background-color: #FBF9F4;
+        }
+
+    .msg-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--accent-secondary);
+        color: #4A3E38;
+        display: grid;
+        place-items: center;
+        font-weight: 600;
+        font-size: 0.85rem;
+        flex-shrink: 0;
+    }
+
+    .msg-body {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .msg-head {
+        font-size: 0.875rem;
+        color: var(--text-primary);
+    }
+
+        .msg-head .msg-subject {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+    .msg-preview {
+        margin: 2px 0 0;
+        font-size: 0.825rem;
+        color: var(--text-muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .msg-date {
+        font-size: 0.775rem;
+        color: var(--text-muted);
+        white-space: nowrap;
+    }
+
+    .status-pill.status-unread {
+        background-color: var(--state-warning-bg);
+        color: var(--state-warning-text);
+        border: 1px solid #F1E3C8;
+    }
+
+        .status-pill.status-unread::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--state-warning-text);
+        }
+
+    .empty-note {
+        padding: 2rem 1.5rem;
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 0.875rem;
+    }
+
+    @@media (max-width: 1199.98px) {
+        .stats-row.stats-row-3 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media (max-width: 991.98px) {
+        .dash-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 575.98px) {
+        .stats-row.stats-row-3 {
+            grid-template-columns: 1fr;
+        }
+
+        .msg-date {
+            display: none;
+        }
+    }
+</style>
+
+<main class="page-content-area">
+
+    <!-- Sayfa başlığı -->
+    <div class="content-header-row">
+        <div>
+            <h1 class="page-title">Dashboard</h1>
+            <p class="page-subtitle">Portfolyo sitenizin genel durumunu ve gelen mesajları buradan takip edebilirsiniz.</p>
+        </div>
+        <div class="header-actions">
+            <a href="/Admin/Message/MessageList" class="btn-pastel-secondary">
+                <i class="bi bi-inbox"></i>
+                <span>Gelen Kutusu</span>
+            </a>
+            <a href="/Admin/Experience/CreateExperience" class="btn-pastel-primary">
+                <i class="bi bi-plus-lg"></i>
+                <span>Yeni Deneyim</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- İstatistik kartları -->
+    <div class="stats-row stats-row-3">
+        @foreach (var c in cards)
+        {
+            <div class="stat-card">
+                <div class="stat-icon-wrapper @c.Cls">
+                    <i class="bi @c.Icon"></i>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-label">@c.Label</span>
+                    <h3 class="stat-value">@c.Val</h3>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Haftalık grafik + okunma oranı -->
+    <div class="dash-grid">
+        <div class="dash-card">
+            <div class="dash-card-title">
+                Son 7 Gün
+                <small>Günlük gelen mesajlar</small>
+            </div>
+            <div class="week-bars">
+                @for (int i = 0; i < Model.WeekCounts.Count; i++)
+                {
+                    var count = Model.WeekCounts[i];
+                    var h = count * 100 / weekMax;
+                    <div class="week-bar" title="@Model.WeekLabels[i]: @count mesaj">
+                        <b>@count</b>
+                        <div class="week-bar-fill" style="height:@(h)%"></div>
+                        <span>@Model.WeekLabels[i]</span>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="dash-card">
+            <div class="dash-card-title">Okunma Oranı</div>
+            <div class="donut-ring" style="--p:@Model.ReadRate">
+                <div>%@Model.ReadRate</div>
+            </div>
+            <div class="donut-legend">
+                <span><i style="background:var(--accent-primary)"></i>Okundu (@Model.ReadMessages)</span>
+                <span><i style="background:var(--accent-pastel-green); border:1px solid var(--border-color)"></i>Okunmadı (@Model.UnreadMessages)</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kategorilere göre proje sayısı -->
+    <div class="data-table-card" style="margin-bottom:1.8rem;">
+        <div class="card-section-head">
+            <h2>Kategorilere Göre Proje Sayısı</h2>
+            <a href="/Admin/Project/ProjectList">Projelere git →</a>
+        </div>
+
+        @if (Model.CategoryStats.Any())
+        {
+            <div class="table-responsive-wrapper">
+                <table class="custom-admin-table">
+                    <thead>
+                        <tr>
+                            <th>Kategori</th>
+                            <th>Proje Sayısı</th>
+                            <th style="width:50%;">Dağılım</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.CategoryStats)
+                        {
+                            var width = item.ProjectCount * 100 / catMax;
+                            <tr>
+                                <td><strong>@item.CategoryName</strong></td>
+                                <td><span class="work-type-badge">@item.ProjectCount proje</span></td>
+                                <td>
+                                    <div class="dist-track">
+                                        <div class="dist-fill" style="width:@(width)%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="empty-note">Henüz kategoriye bağlı proje bulunmuyor.</div>
+        }
+    </div>
+
+    <!-- Son mesajlar -->
+    <div class="data-table-card">
+        <div class="card-section-head">
+            <h2>Son Mesajlar</h2>
+            <a href="/Admin/Message/MessageList">Tümünü gör →</a>
+        </div>
+
+        @if (Model.LastMessages.Any())
+        {
+            foreach (var m in Model.LastMessages)
+            {
+                // NOT: Message entity'ndeki gerçek property adlarına göre düzenle
+                var name = m.SenderName ?? "";
+                var initial = name.Length > 0 ? name.Substring(0, 1).ToUpper() : "?";
+                var detail = m.MessageDetail ?? "";
+                var preview = detail.Length > 70 ? detail.Substring(0, 70) + "..." : detail;
+
+                <div class="msg-item">
+                    <div class="msg-avatar">@initial</div>
+
+                    <div class="msg-body">
+                        <div class="msg-head">
+                            <strong>@name</strong>
+                            <span class="msg-subject">· @m.Subject</span>
+                        </div>
+                        <p class="msg-preview">@preview</p>
+                    </div>
+
+                    <span class="msg-date">@m.SendDate.ToString("dd.MM.yyyy HH:mm")</span>
+
+                    @if (m.IsRead)
+                    {
+                        <span class="status-pill status-active">Okundu</span>
+                    }
+                    else
+                    {
+                        <span class="status-pill status-unread">Okunmadı</span>
+                    }
+                </div>
+            }
+        }
+        else
+        {
+            <div class="empty-note">Henüz mesaj bulunmuyor.</div>
+        }
+    </div>
+
+</main>

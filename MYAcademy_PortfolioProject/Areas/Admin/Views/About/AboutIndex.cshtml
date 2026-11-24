@@ -1,0 +1,120 @@
+﻿@model About
+@{
+    ViewData["Title"] = "Hakkımda";
+    Layout = "~/Areas/Admin/Views/AdminLayout/Index.cshtml";
+}
+
+<div class="page-content-area">
+
+    <div class="content-header-row">
+        <div>
+            <h2 class="page-title">Hakkımda</h2>
+            <p class="page-subtitle">Sitedeki hakkımda bölümünü buradan güncelleyebilirsiniz.</p>
+        </div>
+    </div>
+
+    <div class="side-drawer-card" style="margin-top:0;">
+        @if (ViewBag.Error != null)
+        {
+            <div class="mb-3 small" style="color:#C98686;">@ViewBag.Error</div>
+        }
+        <form method="post" id="aboutForm" enctype="multipart/form-data">
+            <input type="hidden" asp-for="AboutId" />
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="FullName" class="form-label-custom">Ad Soyad</label>
+                    <input asp-for="FullName" class="form-control-custom" />
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="JobTitle" class="form-label-custom">Meslek / Unvan</label>
+                    <input asp-for="JobTitle" class="form-control-custom" />
+                </div>
+
+                <div class="col-12">
+                    <label asp-for="AboutTitle" class="form-label-custom">Başlık</label>
+                    <input asp-for="AboutTitle" class="form-control-custom" />
+                </div>
+
+                <div class="col-12">
+                    <label asp-for="AboutDescription" class="form-label-custom">Açıklama 1</label>
+                    <textarea asp-for="AboutDescription" class="form-control-custom" rows="4"></textarea>
+                </div>
+
+                <div class="col-12">
+                    <label asp-for="AboutDescription2" class="form-label-custom">Açıklama 2</label>
+                    <textarea asp-for="AboutDescription2" class="form-control-custom" rows="4"></textarea>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label-custom">
+                        Yeni Fotoğraf Seç
+                    </label>
+
+                    <input type="file"
+                           name="imageFile"
+                           class="form-control-custom"
+                           accept=".jpg,.jpeg,.png,.webp" />
+
+
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <div class="col-12">
+                            <label class="form-label-custom">
+                                Mevcut Fotoğraf
+                            </label>
+
+                            <div>
+                                <img src="@Model.ImageUrl"
+                                     alt="Hero Section Fotoğrafı"
+                                     style="width:200px; height:150px; object-fit:cover; border-radius:10px;" />
+                            </div>
+                        </div>
+                    }
+                </div>
+
+
+                <div class="col-md-6">
+                    <input type="hidden" asp-for="CvUrl" />
+                    <label class="form-label-custom">Özgeçmiş (PDF)</label>
+                    <input type="file" name="cvFile" accept=".pdf" class="form-control-custom" />
+                    @if (!string.IsNullOrEmpty(Model.CvUrl))
+                    {
+                        <a href="@Model.CvUrl" target="_blank" class="small">Mevcut CV'yi görüntüle</a>
+                    }
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn-pastel-primary">
+                    <i class="bi bi-check2-circle"></i>
+                    <span>Kaydet</span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.getElementById('aboutForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const form = this;
+
+        Swal.fire({
+            title: "Do you want to save the changes?",
+            showDenyButton: true,
+            confirmButtonText: "Save",
+            denyButtonText: `Don't save`
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire("Saved!", "", "success").then(() => form.submit());
+            } else if (result.isDenied) {
+                Swal.fire("Changes are not saved", "", "info");
+            }
+        });
+    });
+</script>
+

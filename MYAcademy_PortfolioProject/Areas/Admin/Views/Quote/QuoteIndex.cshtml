@@ -1,0 +1,55 @@
+﻿@model MYAcademy_PortfolioProject.Entities.Quote
+
+@{
+    ViewData["Title"] = "Günün Sözü / Alıntı Yönetimi";
+    Layout = "~/Areas/Admin/Views/AdminLayout/Index.cshtml";
+}
+
+<main class="page-content-area">
+
+    <!-- Sayfa Başlığı -->
+    <div class="content-header-row">
+        <div>
+            <h1 class="page-title">Alıntı Yönetimi</h1>
+            <p class="page-subtitle">Sitenizde tekil olarak gösterilecek alıntı ve sözü buradan güncelleyebilirsiniz.</p>
+        </div>
+    </div>
+
+    <!-- Form Kartı -->
+    <div class="data-table-card p-4" style="max-width: 800px;">
+
+        <!-- Canlı Önizleme Alanı (Opsiyonel Şık Dokunuş) -->
+
+        <!-- Form Yapısı -->
+        <form asp-action="QuoteIndex" asp-controller="Quote" asp-area="Admin" method="post">
+
+            <!-- Gizli ID Alanı (Güncelleme için kritik) -->
+            <input asp-for="QuoteId" type="hidden"  />
+
+            <div class="row g-3">
+                <!-- 1. Veri: Alıntı Metni -->
+                <div class="col-md-12">
+                    <label class="form-label fw-semibold" style="font-size: 0.85rem;">Alıntı Başlığı/ </label>
+                    <input asp-for="QuoteTitle" type="text" class="form-control" />
+
+                </div>
+
+                <!-- 2. Veri: Yazar / Sahip -->
+                <div class="col-md-12">
+                    <label class="form-label fw-semibold" style="font-size: 0.85rem;">Alıntı / Açıklama</label>
+                    <input asp-for="QuoteDescription" type="text" class="form-control" />
+
+                </div>
+
+                <!-- Kaydet Butonu -->
+                <div class="col-12 d-flex justify-content-end mt-4">
+                    <button type="submit" class="btn-pastel-primary px-4 py-2">
+                        <i class="bi bi-check-lg me-1"></i> Değişiklikleri Kaydet
+                    </button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+</main>

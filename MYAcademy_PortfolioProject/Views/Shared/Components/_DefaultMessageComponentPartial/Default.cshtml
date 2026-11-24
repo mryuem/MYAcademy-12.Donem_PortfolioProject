@@ -1,0 +1,37 @@
+﻿@model Message
+<div class="col-lg-7 ps-lg-5 reveal-on-scroll">
+    <div class="bg-white p-4 p-md-5 rounded-4 border shadow-sm">
+        <form method="post" asp-action="SendMessage" id="contactForm" >
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label  class="form-label small fw-semibold">Adınız Soyadınız *</label>
+                    <input type="text" class="form-control form-control-custom" asp-for="SenderName" placeholder="Örn: Ahmet Yılmaz" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label small fw-semibold">E-posta Adresiniz *</label>
+                    <input type="email" class="form-control form-control-custom" asp-for="SenderEmail" placeholder="ad@ornek.com" required>
+                </div>
+                <div class="col-12">
+                    <label  class="form-label small fw-semibold">Konu</label>
+                    <input type="text" class="form-control form-control-custom" asp-for="Subject" placeholder="Örn: Kurumsal .NET Eğitimi veya Danışmanlık">
+                </div>
+                <div class="col-12">
+                    <label class="form-label small fw-semibold">Mesajınız *</label>
+                    <textarea class="form-control form-control-custom" asp-for="MessageDetail" rows="5" placeholder="Projeniz veya sorunuz hakkında detayları paylaşın..." required></textarea>
+                </div>
+                <div class="col-12 pt-2">
+                    <button type="submit" class="btn-sage w-100 justify-content-center py-3 fs-6">
+                        <i class="bi bi-send-fill"></i>
+                        <span>Mesajımı Gönder</span>
+                    </button>
+                    <div id="formFeedback" class="mt-2 text-center small text-success">
+                        @TempData["MessageSent"]
+                    </div>
+                    <div class="text-muted text-center small mt-3" style="font-size: 0.78rem;">
+                        <i class="bi bi-shield-check me-1"></i> Gönderilen bilgiler gizlilik ilkeleri doğrultusunda korunmaktadır.
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

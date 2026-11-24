@@ -1,0 +1,146 @@
+﻿@model List<Skill>
+
+@{
+    ViewData["Title"] = "Yeteneklerim";
+    Layout = "~/Areas/Admin/Views/AdminLayout/Index.cshtml";
+    int counter = 1;
+}
+
+<div class="page-content-area">
+
+    <div class="content-header-row">
+        <div>
+            <h2 class="page-title">Yeteneklerim</h2>
+            <p class="page-subtitle">Yeteneklerinizi ve kullandığınız teknolojileri yönetin.</p>
+        </div>
+
+        <div class="header-actions">
+            <a asp-action="CreateSkill" class="btn-pastel-primary">
+                <i class="bi bi-plus-lg"></i>
+                Yeni Yetenek
+            </a>
+        </div>
+    </div>
+
+    <div class="data-table-card">
+        <div class="table-responsive-wrapper">
+
+            <table class="custom-admin-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Yetenek</th>
+                        <th>Açıklama</th>
+                        <th>Teknolojiler</th>
+                        <th>İşlemler</th>
+                        
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="col-id">@counter</td>
+
+                            <td>
+                                <div class="skill-title-cell">
+                                    <div class="ct-skill-icon">
+                                        <i class="@item.IconUrl"></i>
+                                    </div>
+                                    <strong>@item.Title</strong>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="skill-description">
+                                    @item.Description
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="skill-items-list">
+                                    @if (item.SkillItems != null && item.SkillItems.Any())
+                                    {
+                                        @foreach (var skill in item.SkillItems)
+                                        {
+                                            <span class="skill-item-badge">
+                                                @skill.SkillItemTitle
+                                            </span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Teknoloji eklenmemiş</span>
+                                    }
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row-actions-group">
+                                    <a asp-action="UpdateSkill" asp-route-id="@item.SkillId" class="btn-action-icon btn-edit" title="Güncelle">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a asp-action="DeleteSkill" asp-route-id="@item.SkillId" class="btn-action-icon btn-delete" title="Sil"
+                                       onclick="return confirm('Bu kaydı silmek istediğinize emin misiniz?');">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+
+                        </tr>
+                        counter++;
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+</div>
+
+<style>
+    .ct-skill-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: var(--accent-pastel-green);
+        color: #487355;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+
+    .skill-title-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 190px;
+    }
+
+    .skill-description {
+        max-width: 280px;
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+        line-height: 1.6;
+    }
+
+    .skill-items-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        min-width: 200px;
+    }
+
+    .skill-item-badge {
+        padding: 5px 9px;
+        border-radius: 6px;
+        background: var(--accent-pastel-blue);
+        color: #557996;
+        border: 1px solid #DCE8EF;
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+</style>

@@ -1,0 +1,64 @@
+﻿@model MYAcademy_PortfolioProject.Entities.Project
+
+@{
+    ViewData["Title"] = "Yeni Proje Ekle";
+    Layout = "~/Areas/Admin/Views/AdminLayout/Index.cshtml";
+}
+
+<main class="page-content-area">
+
+    <div class="content-header-row">
+        <div>
+            <h1 class="page-title">Yeni Proje Ekle</h1>
+            <p class="page-subtitle">Portfolyonuz için yeni bir proje kaydı oluşturun.</p>
+        </div>
+        <div class="header-actions">
+            <a href="/Admin/Project/ProjectList" class="btn-pastel-secondary">
+                <i class="bi bi-arrow-left"></i>
+                <span>Listeye Dön</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="data-table-card p-4">
+        <form asp-action="CreateProject" asp-controller="Project" asp-area="Admin" method="post">
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label-custom">Proje Başlığı</label>
+                    @Html.TextBoxFor(x => x.ProjectTitle, new { @class = "form-control-custom", placeholder = "Proje başlığını giriniz..." })
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label-custom">Kategori</label>
+                    @Html.DropDownListFor(x => x.CategoryId, (SelectList)ViewBag.Categories, "Kategori Seçiniz...", new { @class = "form-control-custom" })
+                </div>
+
+                <div class="col-md-12">
+                    <label class="form-label-custom">Proje Görsel URL</label>
+                    @Html.TextBoxFor(x => x.ImageUrl, new { @class = "form-control-custom", placeholder = "https://... veya /images/proje.jpg" })
+                </div>
+
+                <div class="col-md-12">
+                    <label class="form-label-custom">Teknolojiler / İtemlar (Çoklu Seçim)</label>
+                    @Html.ListBox("selectedProjectItem", (MultiSelectList)ViewBag.ProjectItems, new { @class = "form-control-custom", multiple = "multiple", style = "height: 110px;" })
+                    <small class="text-muted" style="font-size: 0.75rem;">Birden fazla seçmek için Ctrl tuşuna basılı tutabilirsiniz.</small>
+                </div>
+
+                <div class="col-md-12">
+                    <label class="form-label-custom">Açıklama</label>
+                    @Html.TextAreaFor(x => x.Description, 4, 3, new { @class = "form-control-custom", placeholder = "Proje detaylarını yazınız..." })
+                </div>
+
+                <div class="col-12 d-flex justify-content-end gap-2 mt-3">
+                    <a href="/Admin/Project/ProjectList" class="btn-pastel-secondary">İptal</a>
+                    <button type="submit" class="btn-pastel-primary">
+                        <i class="bi bi-check-lg"></i> Kaydet
+                    </button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+</main>

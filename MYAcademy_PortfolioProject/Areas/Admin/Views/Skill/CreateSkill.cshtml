@@ -1,0 +1,69 @@
+﻿@model Skill
+
+@{
+    ViewData["Title"] = "Yeni Yetenek";
+    Layout = "~/Areas/Admin/Views/AdminLayout/Index.cshtml";
+}
+
+<div class="page-content-area">
+    <div class="content-header-row">
+        <div>
+            <h2 class="page-title">Yeni Yetenek</h2>
+            <p class="page-subtitle">Yetenek ve teknolojilerini ekleyin.</p>
+        </div>
+    </div>
+
+    <div class="data-table-card" style="padding: 24px;">
+        <form  method="post">
+
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label">Yetenek Başlığı</label>
+                <input asp-for="Title" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label">Açıklama</label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="IconUrl" class="form-label">İkon</label>
+                <input asp-for="IconUrl" class="form-control"
+                       placeholder="bi bi-code-slash" />
+            </div>
+
+
+            <div class="mb-3">
+                <label class="form-label">Teknolojiler</label>
+                <select name="selectedSkillItems" class="form-select" >
+                    @foreach (var item in ViewBag.SkillItems)
+                    {
+                        <option value="@item.SkillItemId">
+                            @item.SkillItemTitle
+                        </option>
+                    }
+                </select>
+            </div>
+
+
+            <button type="submit" class="btn-pastel-primary">
+                Kaydet
+            </button>
+
+            <a asp-action="SkillIndex" class="btn btn-light">İptal</a>
+        </form>
+    </div>
+</div>
+
+<script>
+    function addSkillItem() {
+        const container = document.getElementById("skillItems");
+
+        const input = document.createElement("input");
+        input.name = "skillItems";
+        input.className = "form-control mb-2";
+        input.placeholder = "Teknoloji adı";
+
+        container.appendChild(input);
+    }
+</script>

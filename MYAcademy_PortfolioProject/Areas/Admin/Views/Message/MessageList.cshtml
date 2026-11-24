@@ -1,0 +1,206 @@
+﻿@model List<MYAcademy_PortfolioProject.Entities.Message>
+
+@{
+    ViewData["Title"] = "Gelen Mesajlar";
+    Layout = "~/Areas/Admin/Views/AdminLayout/Index.cshtml";
+}
+
+<style>
+    .db {
+        --g: #2f5d4e;
+        --g-soft: #e7efe9;
+        --line: #ebe8e1;
+        --muted: #8a8a85;
+    }
+
+    .db-card {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 1.4rem;
+    }
+
+    .db-title {
+        font-weight: 600;
+        margin-bottom: 1.2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .msg-row {
+        display: flex;
+        align-items: center;
+        gap: .9rem;
+        padding: 1rem;
+        margin-bottom: .8rem;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #fff;
+    }
+
+        .msg-row:last-child {
+            margin-bottom: 0;
+        }
+
+    .avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: var(--g-soft);
+        color: var(--g);
+        display: grid;
+        place-items: center;
+        font-weight: 600;
+        flex-shrink: 0;
+    }
+
+    .msg-body {
+        flex: 1;
+        min-width: 0;
+    }
+
+        .msg-body p {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: .85rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+    .badge-soft {
+        font-size: .72rem;
+        padding: .35rem .7rem;
+        border-radius: 20px;
+        white-space: nowrap;
+    }
+
+    .c-green {
+        background: var(--g-soft);
+        color: var(--g);
+    }
+
+    .c-rose {
+        background: #f9e7e7;
+        color: #b44b4b;
+    }
+
+    .c-blue {
+        background: #e6eef8;
+        color: #3b6ea5;
+    }
+
+    .msg-actions {
+        display: flex;
+        gap: .4rem;
+        flex-shrink: 0;
+    }
+
+    .empty-message {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--muted);
+    }
+
+        .empty-message i {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+    
+</style>
+
+<div class="db container-fluid py-3">
+
+    <div class="db-card">
+
+        <div class="db-title">
+            <div>
+                <h5 class="mb-1">Gelen Mesajlar</h5>
+                <small class="text-muted">
+                    Ziyaretçilerden gelen mesajları buradan yönetebilirsiniz.
+                </small>
+            </div>
+
+            <span class="badge-soft c-green">
+                Toplam @Model.Count Mesaj
+            </span>
+        </div>
+
+        @if (Model.Any())
+        {
+            @foreach (var item in Model)
+            {
+                <div class="msg-row ">
+
+                    <div class="avatar">
+                        @(string.IsNullOrWhiteSpace(item.SenderName)
+                                        ? "?"
+                                        : item.SenderName.Substring(0, 1).ToUpper())
+            </div>
+
+                    <div class="msg-body">
+                        <strong>@item.SenderName</strong>
+                        <span class="small text-muted">
+                            · @item.SenderEmail
+                        </span>
+
+                        <div class="fw-semibold small mt-1">
+                            @item.Subject
+                        </div>
+
+                        <p>
+                            @(string.IsNullOrEmpty(item.MessageDetail)
+                                                ? ""
+                                                : item.MessageDetail.Length > 50
+                                                ? item.MessageDetail.Substring(0, 50) + "..."
+                                                : item.MessageDetail)
+                </p>
+
+                        <small class="text-muted">
+                            @item.SendDate.ToString("dd MMMM yyyy - HH:mm")
+                        </small>
+                    </div>
+
+            @if (item.IsRead)
+                    {
+                        <span class="badge-soft c-blue">Okundu</span>
+                    }
+                    else
+                    {
+                        <span class="badge-soft c-rose">Yeni</span>
+                    }
+
+                    <div class="msg-actions">
+
+                        <a href="/Admin/Message/MessageDetail/@item.MessageId"
+                           class="btn btn-sm btn-outline-success"
+                           title="Mesajı Aç">
+                            <i class="bi bi-eye"></i>
+                        </a>
+
+                        <a href="/Admin/Message/DeleteMessage/@item.MessageId"
+                           class="btn btn-sm btn-outline-danger"
+                           title="Mesajı Sil"
+                           onclick="return confirm('Bu mesajı silmek istediğinize emin misiniz?')">
+                            <i class="bi bi-trash"></i>
+                        </a>
+
+                    </div>
+
+                </div>
+            }
+        }
+        else
+        {
+            <div class="empty-message">
+                <i class="bi bi-envelope-open"></i>
+                <h6>Henüz mesaj bulunmuyor.</h6>
+                <p>İletişim formundan gönderilen mesajlar burada listelenecek.</p>
+            </div>
+        }
+
+    </div>
+</div>

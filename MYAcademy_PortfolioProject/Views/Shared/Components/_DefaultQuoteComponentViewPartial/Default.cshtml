@@ -1,0 +1,12 @@
+﻿@model Quote
+<div class="col-lg-5 ps-lg-4 d-flex align-items-center reveal-on-scroll">
+    <div class="p-4 p-md-5 rounded-4 border w-100" style="background-color: var(--bg-primary);">
+        <i class="bi bi-quote fs-1 text-muted opacity-50"></i>
+        <blockquote class="fs-4 fw-bold font-heading my-3 text-dark">
+            "@Model.QuoteTitle"
+        </blockquote>
+        <p class="text-muted small mb-0 lh-lg">
+            @Model.QuoteDescription
+        </p>
+    </div>
+</div>

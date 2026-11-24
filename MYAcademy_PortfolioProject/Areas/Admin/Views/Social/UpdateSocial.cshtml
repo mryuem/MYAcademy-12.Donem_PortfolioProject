@@ -1,0 +1,110 @@
+﻿@model MYAcademy_PortfolioProject.Entities.SocialMedia
+
+@{
+    ViewData["Title"] = "Sosyal Medya Güncelle";
+    Layout = "~/Areas/Admin/Views/AdminLayout/Index.cshtml";
+}
+
+<style>
+    .social-page {
+        background: #F7F6F2;
+        padding: 25px;
+        color: #2E312F;
+    }
+
+    .social-card {
+        background: #FFFEFB;
+        border: 1px solid #E7E4DD;
+        border-radius: 14px;
+        padding: 25px;
+        max-width: 750px;
+    }
+
+        .social-card label {
+            color: #707772;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .social-card .form-control {
+            border: 1px solid #E7E4DD;
+            border-radius: 8px;
+            padding: 11px 13px;
+        }
+
+            .social-card .form-control:focus {
+                border-color: #9BB7A2;
+                box-shadow: 0 0 0 3px #EEF4EF;
+            }
+
+    .btn-save {
+        background: #9BB7A2;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+    }
+
+        .btn-save:hover {
+            background: #87A38F;
+            color: white;
+        }
+
+    .btn-back {
+        background: #F4EEE8;
+        color: #707772;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        text-decoration: none;
+    }
+</style>
+
+<div class="social-page">
+
+    <div class="mb-4">
+        <h3 class="fw-bold mb-1">Sosyal Medya Güncelle</h3>
+        <p class="text-muted mb-0">Sosyal medya hesabı bilgilerini düzenleyebilirsiniz.</p>
+    </div>
+
+    <div class="social-card">
+
+        <form asp-action="UpdateSocial" method="post">
+
+            <input type="hidden" asp-for="SocialMediaId" />
+
+            <div class="mb-3">
+                <label asp-for="SocialName">Sosyal Medya Adı</label>
+                <input asp-for="SocialName" class="form-control" />
+                <span asp-validation-for="SocialName" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="SocialUrl">Sosyal Medya URL</label>
+                <input asp-for="SocialUrl" class="form-control" />
+                <span asp-validation-for="SocialUrl" class="text-danger"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="SocialIcon">Sosyal Medya İkonu</label>
+                <input asp-for="SocialIcon" class="form-control" />
+                <small class="text-muted">
+                    Örn: bi bi-instagram
+                </small>
+                <span asp-validation-for="SocialIcon" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn-save">
+                    <i class="bi bi-check-lg me-1"></i> Güncelle
+                </button>
+
+                <a asp-action="SocialIndex" class="btn-back">
+                    Vazgeç
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+</div>

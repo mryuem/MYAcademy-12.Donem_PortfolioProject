@@ -1,0 +1,112 @@
+﻿@model List<MYAcademy_PortfolioProject.Entities.Project>
+
+@{
+    ViewData["Title"] = "Projeler ";
+    Layout = "~/Areas/Admin/Views/AdminLayout/Index.cshtml";
+}
+
+<main class="page-content-area">
+
+    <!-- Sayfa Başlığı ve Yeni Ekle Butonu -->
+    <div class="content-header-row">
+        <div>
+            <h1 class="page-title">Projelerim</h1>
+            <p class="page-subtitle">Portfolyonuzda sergilenen projeleri buradan yönetebilirsiniz.</p>
+        </div>
+        <div class="header-actions">
+            <a href="/Admin/Project/CreateProject" class="btn-pastel-primary">
+                <i class="bi bi-plus-lg"></i>
+                <span>Yeni Proje Ekle</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Proje Kartları Grid Yapısı -->
+    @if (Model != null && Model.Any())
+    {
+        <div class="row g-4">
+            @foreach (var item in Model)
+            {
+                <div class="col-12 col-md-6 col-xl-4">
+                    <div class="data-table-card h-100 d-flex flex-column" style="transition: transform 0.2s ease, box-shadow 0.2s ease;">
+
+                        <!-- Proje Görseli -->
+                        <div style="height: 190px; background-color: #FAF9F6; border-bottom: 1px solid var(--border-soft); position: relative; overflow: hidden;">
+                            @if (!string.IsNullOrEmpty(item.ImageUrl))
+                            {
+                                <img src="@item.ImageUrl" alt="@item.ProjectTitle" style="width: 100%; height: 100%; object-fit: cover;">
+                            }
+                            else
+                            {
+                                <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center text-muted">
+                                    <i class="bi bi-image" style="font-size: 2rem; opacity: 0.4;"></i>
+                                    <span style="font-size: 0.75rem; margin-top: 4px;">Görsel Eklenmemiş</span>
+                                </div>
+                            }
+
+                            <!-- Kategori Rozeti (Görsel Üzerinde Sağ Üst) -->
+                            <div style="position: absolute; top: 12px; right: 12px;">
+                                <span class="work-type-badge" style="background-color: rgba(255, 255, 255, 0.92); backdrop-filter: blur(4px); box-shadow: 0 2px 6px rgba(0,0,0,0.06);">
+                                    @(item.Category != null ? item.Category.CategoryName : "Kategorisiz")
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Kart İçeriği -->
+                        <div class="p-4 d-flex flex-column flex-grow-1">
+                            <h5 style="font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin-bottom: 8px;">
+                                @item.ProjectTitle
+                            </h5>
+
+                            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 16px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                @item.Description
+                            </p>
+
+                            <!-- Teknolojiler / İtemlar -->
+                            <div class="mb-4 mt-auto">
+                                @if (item.ProjectItems != null && item.ProjectItems.Any())
+                                {
+                                    <div class="d-flex flex-wrap gap-1">
+                                        @foreach (var pItem in item.ProjectItems)
+                                        {
+                                            <span class="badge bg-light text-dark border" style="font-size: 0.72rem; font-weight: 500; padding: 4px 8px;">
+                                                @pItem.ProjectItemTitle
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span class="text-muted" style="font-size: 0.75rem;">Teknoloji belirtilmemiş</span>
+                                }
+                            </div>
+
+                            <!-- Alt İşlem Butonları -->
+                            <div class="pt-3 d-flex align-items-center justify-content-between" style="border-top: 1px solid var(--border-soft);">
+                                <span class="col-id">#@item.ProjectId</span>
+                                <div class="row-actions-group">
+                                    <a href="/Admin/Project/UpdateProject/@item.ProjectId" class="btn-action-icon btn-edit" title="Düzenle">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a href="/Admin/Project/DeleteProject/@item.ProjectId" class="btn-action-icon btn-delete" title="Sil"
+                                       onclick="return confirm('Bu projeyi silmek istediğinize emin misiniz?');">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="data-table-card p-5 text-center text-muted">
+            <i class="bi bi-folder2-open" style="font-size: 2.5rem; opacity: 0.5;"></i>
+            <p class="mt-2 mb-0">Henüz kayıtlı bir proje bulunmuyor.</p>
+        </div>
+    }
+
+</main>

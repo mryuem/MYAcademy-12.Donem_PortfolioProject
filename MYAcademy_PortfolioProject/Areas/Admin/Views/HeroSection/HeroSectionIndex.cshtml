@@ -1,0 +1,93 @@
+﻿@model MYAcademy_PortfolioProject.Models.HeroSectionViewModel
+
+@{
+    ViewData["Title"] = "Ana Banner Alanı";
+    Layout = "~/Areas/Admin/Views/AdminLayout/Index.cshtml";
+}
+
+<div class="page-content-area">
+
+    <div class="content-header-row">
+        <div>
+            <h2 class="page-title">Ana Banner Alanı</h2>
+            <p class="page-subtitle">
+                Sitedeki giriş bölümünü buradan düzenleyebilirsiniz.
+            </p>
+        </div>
+    </div>
+
+    <div class="side-drawer-card" style="margin-top:0;">
+
+        <form method="post"
+              asp-action="HeroSectionIndex"
+              asp-controller="HeroSection"
+              asp-area="Admin"
+              enctype="multipart/form-data">
+
+            <input type="hidden" asp-for="HeroSectionId" />
+
+            <div class="row g-3">
+
+                <div class="col-12">
+                    <label asp-for="Greeting" class="form-label-custom">
+                        Karşılama Mesajı
+                    </label>
+                    <input asp-for="Greeting" class="form-control-custom" />
+                </div>
+
+                <div class="col-12">
+                    <label asp-for="Title" class="form-label-custom">
+                        Başlık
+                    </label>
+                    <input asp-for="Title" class="form-control-custom" />
+                </div>
+
+                <div class="col-12">
+                    <label asp-for="Description" class="form-label-custom">
+                        Açıklama
+                    </label>
+                    <textarea asp-for="Description"
+                              class="form-control-custom"
+                              rows="4"></textarea>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="ImageFile" class="form-label-custom">
+                        Yeni Fotoğraf Seç
+                    </label>
+
+                    <input asp-for="ImageFile"
+                           type="file"
+                           class="form-control-custom"
+                           accept=".jpg,.jpeg,.png,.webp" />
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.MainImageUrl))
+                {
+                    <div class="col-12">
+                        <label class="form-label-custom">
+                            Mevcut Fotoğraf
+                        </label>
+
+                        <div>
+                            <img src="@Model.MainImageUrl"
+                                 alt="Hero Section Fotoğrafı"
+                                 style="width:200px; height:150px; object-fit:cover; border-radius:10px;" />
+                        </div>
+                    </div>
+                }
+
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn-pastel-primary">
+                    <i class="bi bi-check2-circle"></i>
+                    <span>Değişiklikleri Kaydet</span>
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
